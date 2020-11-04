@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from "react"
 import { EventContext } from "./EventProvider.js";
-import { GameContext } from "./GameProvider.js";
+import { GameContext } from "../game/GameProvider.js";
 
 
 export const EventForm = props => {
@@ -8,15 +8,14 @@ export const EventForm = props => {
     const { events, getEvents, createEvent } = useContext(EventContext)
     
     const [currentEvent, setEvent] = useState({
-        skillLevel: 1,
-        numberOfPlayers: 0,
-        title: "",
-        gameTypeId: 0
+        gameId: 0,
+        day: "",
+        time: "",
+        location: ""
     })
 
     useEffect(() => {
         getGames()
-        getEvents()
     }, [])
 
     const handleControlledInputChange = (event) => {
@@ -37,24 +36,51 @@ export const EventForm = props => {
                         <option value="0">Select a game...</option>
                         {
                             games.map(game => (
-                                <option></option>
+                                <option key={game.id} value={game.id}>
+                                    {game.title}
+                                </option>
                             ))
                         }
                     </select>
                 </div>
             </fieldset>
-
-            {/* Create the rest of the input fields */}
+            <fieldset>
+                <div className="form-group">
+                    <label htmlFor="day">Date: </label>
+                    <input type="date" name="day" required autoFocus className="form-control"
+                        value={currentEvent.day}
+                        onChange={handleControlledInputChange}
+                    />
+                </div>
+            </fieldset>
+            <fieldset>
+                <div className="form-group">
+                    <label htmlFor="time">Time: </label>
+                    <input type="time" name="time" required autoFocus className="form-control"
+                        value={currentEvent.time}
+                        onChange={handleControlledInputChange}
+                    />
+                </div>
+            </fieldset>
+            <fieldset>
+                <div className="form-group">
+                    <label htmlFor="location">location: </label>
+                    <input type="text" name="location" required autoFocus className="form-control"
+                        value={currentEvent.location}
+                        onChange={handleControlledInputChange}
+                    />
+                </div>
+            </fieldset>
 
             <button type="submit"
                 onClick={evt => {
                     evt.preventDefault()
 
                     const event = {
-                        title: currentGame.title,
-                        numberOfPlayers: parseInt(currentGame.numberOfPlayers),
-                        skillLevel: parseInt(currentGame.skillLevel),
-                        gameTypeId: parseInt(currentGame.gameTypeId)
+                        gameId: parseInt(currentEvent.gameId),
+                        day: currentEvent.day,
+                        time: currentEvent.time,
+                        location: currentEvent.location
                     }
                     createEvent(event)
                         .then(props.history.push("/events"))
